@@ -3,35 +3,44 @@ document.addEventListener("DOMContentLoaded", function () {
     const chatLog = document.getElementById("chat-log");
     const sendBtn = document.getElementById("send-btn");
 
+    // ✅ Mensaje de bienvenida automático
+    addMessage("bot", "Bot: ¡Hola! Soy tu asistente agrícola. Pregúntame sobre riego o fertilizantes.");
+
+    // ✅ Enviar con tecla Enter
+    chatInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") sendBtn.click();
+    });
+
+    // Aquí sigue el resto de tu código, por ejemplo:
+    sendBtn.addEventListener("click", function () {
+        const userInput = chatInput.value;
+        if (userInput.trim() !== "") {
+            addMessage("user", "Tú: " + userInput);
+            getBotResponse(userInput);
+            chatInput.value = "";
+        }
+    });
+
     function addMessage(sender, text) {
-        const msg = document.createElement("div");
-        msg.className = sender;
-        msg.innerText = text;
-        chatLog.appendChild(msg);
+        const message = document.createElement("div");
+        message.classList.add(sender);
+        message.textContent = text;
+        chatLog.appendChild(message);
         chatLog.scrollTop = chatLog.scrollHeight;
     }
 
-    function botResponse(userMsg) {
-        const msg = userMsg.toLowerCase();
-        if (msg.includes("hola")) {
-            return "¡Hola! ¿En qué puedo ayudarte con tus cultivos?";
-        } else if (msg.includes("riego")) {
-            return "Recuerda regar temprano en la mañana o al atardecer para evitar evaporación.";
-        } else if (msg.includes("fertilizante")) {
-            return "Te recomiendo usar fertilizantes orgánicos si es posible. ¿Qué cultivo estás tratando?";
+    function getBotResponse(input) {
+        let response = "";
+
+        // Aquí va tu lógica del bot
+        if (input.toLowerCase().includes("riego")) {
+            response = "Bot: El riego debe realizarse temprano en la mañana o al atardecer.";
+        } else if (input.toLowerCase().includes("fertilizante")) {
+            response = "Bot: Usa fertilizante orgánico cada 15 días para mejores resultados.";
         } else {
-            return "Lo siento, aún estoy aprendiendo. Intenta preguntarme sobre riego, fertilizantes o salud del cultivo.";
+            response = "Bot: No entiendo tu pregunta. ¿Puedes reformularla?";
         }
+
+        addMessage("bot", response);
     }
-
-    sendBtn.addEventListener("click", function () {
-        const userMsg = chatInput.value.trim();
-        if (!userMsg) return;
-
-        addMessage("user", "Tú: " + userMsg);
-        const response = botResponse(userMsg);
-        setTimeout(() => addMessage("bot", "Bot: " + response), 500);
-
-        chatInput.value = "";
-    });
 });
